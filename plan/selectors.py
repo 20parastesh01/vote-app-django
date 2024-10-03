@@ -46,3 +46,21 @@ def update_votes_record(plan, vote_value, old_vote_value=None):
         raise ValidationError({'error': e.messages})
     except Exception as e:
         raise exceptions.FailedToUpdateVoteRecords('Failed to update vote records.') from e
+    
+def get_plans():
+    try:
+        return Plan.objects.all()
+    except Exception as e:
+        raise exceptions.FailedToGetPlans('Failed to get plans.')
+    
+def get_votes_record_by_plan_id(plan):
+    try:
+        return VotesRecord.objects.filter(plan=plan).first()
+    except Exception as e:
+        raise exceptions.FailedToGetVotesRecord('Failed to get votes record for this plan.')
+    
+def get_vote_by_plan_and_user(plan, user):
+    try:
+        return Vote.objects.filter(plan=plan, voted_by=user).exists()
+    except Exception as e:
+        raise exceptions.FailedToGetVote('Failed to get vote.')

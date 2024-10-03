@@ -25,3 +25,20 @@ class FailedToUpdateVoteRecords(BaseCustomException):
 class FailedToVote(BaseCustomException):
    def __init__(self, detail):
         super().__init__(detail, status.HTTP_500_INTERNAL_SERVER_ERROR) 
+        
+        
+class FailedToGetPlans(BaseCustomException):
+   def __init__(self, detail):
+        super().__init__(detail, status.HTTP_500_INTERNAL_SERVER_ERROR) 
+        
+class FailedToGetVotesRecord(BaseCustomException):
+   def __init__(self, detail):
+        super().__init__(detail, status.HTTP_500_INTERNAL_SERVER_ERROR) 
+        
+class FailedToGetVote(BaseCustomException):
+   def __init__(self, detail):
+        super().__init__(detail, status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+class FailedToGetResults(BaseCustomException):
+   def __init__(self, detail):
+        super().__init__(detail, status.HTTP_500_INTERNAL_SERVER_ERROR) 
