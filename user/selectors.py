@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 
 

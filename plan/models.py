@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
+
 class Plan(models.Model):
     title = models.CharField('title', max_length=100, null= False, blank= False)
     body = models.CharField('body', max_length=1000, null= False, blank= False)

@@ -1,15 +1,30 @@
-from rest_framework import generics
-from .serializers import CreatePlanSerializer, VoteSerializer, PlanResultSerializer
-from rest_framework.response import Response
-from django.db import transaction
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from .selectors import get_plan_or_404, get_or_create_vote, update_votes_record, get_plans, get_votes_record_by_plan_id, get_vote_by_plan_and_user
 from . import exceptions
+from .serializers import (
+    CreatePlanSerializer,
+    VoteSerializer,
+    PlanResultSerializer
+)
+from .selectors import (
+    get_plan_or_404,
+    get_or_create_vote,
+    update_votes_record,
+    get_plans,
+    get_votes_record_by_plan_id,
+    get_vote_by_plan_and_user
+)
+from .throttles import HighVoteThrottle, LowVoteThrottle
+from rest_framework.response import Response
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    throttle_classes
+)
+from rest_framework import status
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError, APIException
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from .throttles import HighVoteThrottle, LowVoteThrottle
+from django.db import transaction
 
 
 class CreatePlan(generics.CreateAPIView):
@@ -23,6 +38,7 @@ class CreatePlan(generics.CreateAPIView):
         response_serializer = CreatePlanSerializer(plan)
         
         return Response({'data': [response_serializer.data], 'message': 'Plan created successfuly.', 'code': 201}, status=201)
+
 
 @transaction.atomic
 @api_view(['POST'])
@@ -54,6 +70,7 @@ def vote_a_plan(request, plan_id):
             raise exceptions.FailedToVote(e)
         else:
             raise exceptions.FailedToVote('Failed to submit vote.')
+
 
 @transaction.atomic    
 @api_view(['GET'])
