@@ -1,6 +1,18 @@
 version: "3.1"
 
 services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ${ENV:-.env}
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+
   postgres:
     image: hub.hamdocker.ir/postgres
     restart: always
