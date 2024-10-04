@@ -8,7 +8,8 @@ from .models import Plan
 class VoteAPlanTestCase(APITestCase):
     def setUp(self):
         self.plan = Plan.objects.create(title="test plan", body="test plan body")
-        self.url = reverse('vote_a_plan', kwargs={'plan_id': self.plan.id})
+        self.vote_url = reverse('vote_a_plan', kwargs={'plan_id': self.plan.id})
+        self.result_url = reverse('get_results')
         self.users = []
         for i in range(6):
             user = User.objects.create_user(username=f'testuser{i}', password='password123')
@@ -24,7 +25,7 @@ class VoteAPlanTestCase(APITestCase):
         self.authenticate_user(user)
         data = {'vote': 5}
         
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(self.vote_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['message'], 'Vote successfully submitted.')
 
@@ -34,7 +35,7 @@ class VoteAPlanTestCase(APITestCase):
         self.authenticate_user(user)
         data = {}
 
-        response = self.client.post(self.url, data, format='json')
+        response = self.client.post(self.vote_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('vote', response.data)
 
@@ -45,7 +46,7 @@ class VoteAPlanTestCase(APITestCase):
             self.authenticate_user(user)
             data = {'vote': 5}
             
-            response = self.client.post(self.url, data, format='json')
+            response = self.client.post(self.vote_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
         
     def test_low_vote_throttling(self):
@@ -55,5 +56,18 @@ class VoteAPlanTestCase(APITestCase):
             self.authenticate_user(user)
             data = {'vote': 1}
             
-            response = self.client.post(self.url, data, format='json')
+            response = self.client.post(self.vote_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    def test_show_vote_results(self):
+        """Test show results successful"""
+        user = self.users[0]
+        self.authenticate_user(user)
+        
+        response = self.client.get(self.result_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for item in response.data['data']:
+            self.assertIn('title', item)
+            self.assertIn('average', item)
+            self.assertIn('total', item)
+            self.assertIn('youHaveVoted', item)
